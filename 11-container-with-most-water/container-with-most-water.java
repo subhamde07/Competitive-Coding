@@ -4,10 +4,14 @@ class Solution {
         long amount = 0;
 
         while(i < j){
-            amount = Math.max(amount, Math.min(height[i], height[j]) * (j-i));
+            // amount = Math.max(amount, Math.min(height[i], height[j]) * (j-i));
             if(height[i] < height[j]){
+                amount = Math.max(amount, height[i] * (j - i));
                 i++;
-            } else j--;        
+            } else {
+                amount = Math.max(amount, height[j] * (j - i));
+                j--;
+            }        
         }
         return (int)amount;
     }
