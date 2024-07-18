@@ -1,29 +1,27 @@
 class Solution {
     public int compress(char[] chars) {
-        int index = 0;  // Position to write the compressed character(s)
-        int i = 0;      // Position to read the original character(s)
-
-        while (i < chars.length) {
-            char currentChar = chars[i];
-            int count = 0;
-
-            // Count occurrences of the current character
-            while (i < chars.length && chars[i] == currentChar) {
-                i++;
-                count++;
+        StringBuilder sb = new StringBuilder();
+        
+        int i = 1;
+        int index = 1;
+        sb.append(chars[0]);
+        
+        while(i < chars.length){
+            if(chars[i] == chars[i-1]){
+                index++;
             }
-
-            // Write the character
-            chars[index++] = currentChar;
-
-            // Write the count if it's greater than 1
-            if (count > 1) {
-                for (char c : Integer.toString(count).toCharArray()) {
-                    chars[index++] = c;
-                }
+            else{
+                if(index > 1)
+                    sb.append(index);
+                sb.append(chars[i]);
+                index = 1;
             }
+            i++;
         }
-
-        return index;
+        if(index > 1) sb.append(index);
+        for(int j = 0 ; j < sb.length() ; j++)
+            chars[j] = sb.charAt(j);
+        
+        return sb.length();
     }
 }
