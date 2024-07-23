@@ -6,5 +6,17 @@ class Solution {
         }
 
         return ans;
+
+        // Using set -->
+        // Set<Integer> set= new HashSet<>();
+        // for(int num : nums)
+        // {
+        //     if(!set.add(num))
+        //     {
+        //         set.remove(num);
+        //     }
+        // }
+        // Iterator<Integer> i = set.iterator();
+        // return i.next();
     }
 }
