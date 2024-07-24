@@ -1,31 +1,31 @@
 class Solution {
     public int[] sortJumbled(int[] mapping, int[] nums) {
-        // Step 1: Create a list to store original nums and their mapped values
-        List<int[]> mappedList = new ArrayList<>();
+        List<int[]> storePairs = new ArrayList<int[]>();
+
         for (int i = 0; i < nums.length; i++) {
-            String s = Integer.toString(nums[i]);
-            StringBuilder n = new StringBuilder();
-            for (char ch : s.toCharArray()) {
-                n.append(mapping[ch - '0']);
+            int mappedValue = 0;
+            int temp = nums[i];
+            int place = 1;
+
+            if (temp == 0) {
+                storePairs.add(new int[] { mapping[0], i });
+                continue;
             }
-            mappedList.add(new int[]{nums[i], Integer.parseInt(n.toString()), i});
+            while (temp != 0) {
+                mappedValue = place * mapping[temp % 10] + mappedValue;
+                place *= 10;
+                temp /= 10;
+            }
+            storePairs.add(new int[] { mappedValue, i });
         }
 
-        // Step 2: Sort the list based on the mapped values and original indices for stability
-        mappedList.sort((a, b) -> {
-            if (a[1] != b[1]) {
-                return Integer.compare(a[1], b[1]);
-            } else {
-                return Integer.compare(a[2], b[2]);
-            }
-        });
+        Collections.sort(storePairs, (a, b) -> a[0] - b[0]);
 
-        // Step 3: Create a result array and fill it with the sorted original nums
-        int[] sortedNums = new int[nums.length];
-        for (int i = 0; i < mappedList.size(); i++) {
-            sortedNums[i] = mappedList.get(i)[0];
+        int[] answer = new int[nums.length];
+        for (int i = 0; i < storePairs.size(); i++) {
+            answer[i] = nums[storePairs.get(i)[1]];
         }
 
-        return sortedNums;
+        return answer;
     }
 }
