@@ -1,9 +1,9 @@
 class Solution {
     public int[] countBits(int n) {
-        if(n == 0){
-            return new int[]{0};
-        }
-        int[] ans = new int[n+1];
+        // if(n == 0){
+        //     return new int[]{0};
+        // }
+        // int[] ans = new int[n+1];
         // ans[0] = 0;
         // for(int i=1 ; i<=n ; i++){
         //     if(i % 2 == 0)
@@ -14,8 +14,9 @@ class Solution {
         // return ans;
 
         // Using Bit
-        for(int i=1 ; i<=n ; i++){
-            ans[i] = ans[i >> 1] + (i & 1);
+        int[] ans = new int[n + 1];
+        for(int i = 0; i <= n; i ++){
+            ans[i] = ans[i >> 1] + (1 & i);
         }
         return ans;
     }
