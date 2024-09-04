@@ -1,63 +1,55 @@
 class Solution {
+
+    private static final int HASH_MULTIPLIER = 60001; // Slightly larger than 2 * max coordinate value
+
     public int robotSim(int[] commands, int[][] obstacles) {
-            HashMap<Pair<Integer,Integer>,Boolean> visited=new HashMap<>();
-        for(int[] arr:obstacles){
-            visited.put(new Pair<>(arr[0],arr[1]),true);
+        // Store obstacles in an HashSet for efficient lookup
+        Set<Integer> obstacleSet = new HashSet<>();
+        for (int[] obstacle : obstacles) {
+            obstacleSet.add(hashCoordinates(obstacle[0], obstacle[1]));
         }
-        int r=0,col=0;
-        int row_incr=0,incr=1;
-        HashMap<Pair<Character,Integer>,Character> allDirs=new HashMap<>();
-        allDirs.put(new Pair<>('e',-1),'s');
-        allDirs.put(new Pair<>('e',-2),'n');
-        allDirs.put(new Pair<>('n',-1),'e');
-        allDirs.put(new Pair<>('n',-2),'w');
-        allDirs.put(new Pair<>('w',-1),'n');
-        allDirs.put(new Pair<>('w',-2),'s');
-        allDirs.put(new Pair<>('s',-1),'w');
-        allDirs.put(new Pair<>('s',-2),'e');
-        // System.out.println(allDirs.get(new Pair('e',-2)));
-        Character curr_dir='e';
-        int ans=-1;
-        for(int v:commands){
-            if(v==-1){
-                curr_dir=allDirs.get(new Pair(curr_dir,-1));
+
+        // Define direction vectors: North, East, South, West
+        int[][] directions = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+
+        int[] currentPosition = { 0, 0 };
+        int maxDistanceSquared = 0;
+        int currentDirection = 0; // 0: North, 1: East, 2: South, 3: West
+
+        for (int command : commands) {
+            if (command == -1) {
+                // Turn right
+                currentDirection = (currentDirection + 1) % 4;
+                continue;
             }
-            else if(v==-2){
-                curr_dir=allDirs.get(new Pair(curr_dir,-2));
+            if (command == -2) {
+                // Turn left
+                currentDirection = (currentDirection + 3) % 4;
+                continue;
             }
-            System.out.println(curr_dir);
-            if(curr_dir=='e'){
-                row_incr=0;
-                incr=1;
-            }
-            else if(curr_dir=='w'){
-                row_incr=0;
-                incr=-1;
-            }
-            else if(curr_dir=='n'){
-                row_incr=-1;
-                incr=0;
-            }
-            else{
-                row_incr=1;
-                incr=0;
-            }
-            for(int i=0;i<v;i++){
-                int r2=r+row_incr;
-                int c2=col+incr;
-                System.out.println(r2+" "+c2);
-                if(visited.getOrDefault(new Pair(r2,c2),false)==true){
-                    System.out.println("breaked");
+
+            // Move forward
+            int[] direction = directions[currentDirection];
+            for (int step = 0; step < command; step++) {
+                int nextX = currentPosition[0] + direction[0];
+                int nextY = currentPosition[1] + direction[1];
+                if (obstacleSet.contains(hashCoordinates(nextX, nextY))) {
                     break;
                 }
-                r+=row_incr;
-                col+=incr;
-                ans=Math.max(ans,r*r+col*col);
+                currentPosition[0] = nextX;
+                currentPosition[1] = nextY;
+                maxDistanceSquared = Math.max(
+                    maxDistanceSquared,
+                    nextX * nextX + nextY * nextY
+                );
             }
         }
-        if(ans==-1){
-            return 0;
-        }
-        return ans;
+
+        return maxDistanceSquared;
+    }
+
+    // Hash function to convert (x, y) coordinates to a unique integer value
+    private int hashCoordinates(int x, int y) {
+        return x + HASH_MULTIPLIER * y;
     }
 }
